@@ -4,6 +4,7 @@ const fs = require('fs');
 const index = fs.readFileSync('index.html', 'utf-8');
 const data = JSON.parse(fs.readFileSync('data.json', 'utf-8'));
 
+const products = data.products;
 const morgan = require('morgan');
 
 const app = express();
@@ -15,51 +16,57 @@ app.use(morgan('tiny'));
 
 app.use(express.static('public')); ////make static hosting
 
-// app.use((req, res, next) => {
-//   console.log(
-//     req.ip,
-//     req.method,
-//     req.hostname,
-//     new Date(),
-//     req.get('User-Agent')
-//   );
-//   next();
-// });
+//Api - end point -route CRUD
 
-//type of middleware
-// Application-level middleware
-// Router-level middleware
-// Error-handling middleware
-// Built-in middleware
-// Third-party middleware
+//create api
+app.post('/products', (req, res) => {
+  const data = req.body;
+  console.log(data);
+  products.push(data);
 
-const auth = (req, res, next) => {
-  console.log(req.query);
-  if (req.body.password === '123') {
-    next();
-  } else {
-    res.sendStatus(401);
-  }
-};
-
-// app.use(auth);  this method is for whole application
-
-app.get('/', auth, (req, res) => {
-  res.json({ type: 'GET' });
+  res.status(201).json(data);
 });
 
-app.post('/', auth, (req, res) => {
-  console.log(req.body);
-
-  res.status(201).json({ type: 'post' });
+//Products read api
+app.get('/products', (req, res) => {
+  res.json(products);
 });
 
-// app.get('/', (req, res) => {
-//   // res.send('<h1>hello</h1>');
-//   // res.sendFile('C:/Users/91860/Desktop/node-app/index.html');  for this absolut path required or file module path system
-//   // res.json(data);
-//   // res.sendStatus(404);
-//   // res.status(201).send('<h1>hello</h1>');
-// });
+app.get('/products/:id', (req, res) => {
+  const { id } = req.params;
+  const product = products.find((p) => p.id === +id);
+  res.json(product);
+});
+
+//update api
+app.put('/products/:id', (req, res) => {
+  const { id } = req.params;
+  const productIndex = products.findIndex((p) => p.id === +id);
+
+  products.splice(productIndex, 1, { ...req.body, id: +id });
+
+  res.status(200).json({ msg: 'updated' });
+});
+
+app.patch('/products/:id', (req, res) => {
+  const { id } = req.params;
+  const productIndex = products.findIndex((p) => p.id === +id);
+  const product = products[productIndex];
+
+  products.splice(productIndex, 1, { ...product, ...req.body });
+
+  res.status(200).json({ msg: 'updated' });
+});
+
+//delete api
+
+app.delete('/products/:id', (req, res) => {
+  const { id } = req.params;
+  const productIndex = products.findIndex((p) => p.id === +id);
+
+  products.splice(productIndex, 1);
+
+  res.status(200).json({ msg: 'deleted' });
+});
 
 app.listen(port, () => console.log('server is running' + ' ' + port));
