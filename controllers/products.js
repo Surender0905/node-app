@@ -12,7 +12,7 @@ exports.createProduct = (req, res) => {
 };
 
 exports.getAllProducts = async (req, res) => {
-  const products = await Product.find(); // greater the price 900
+  const products = await Product.find({ price: { $gt: 900 } }); // greater the price 900
   res.json(products);
 };
 

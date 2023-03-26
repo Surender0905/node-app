@@ -2,8 +2,7 @@ require('dotenv').config();
 const express = require('express');
 const morgan = require('morgan');
 const mongoose = require('mongoose');
-const cors = require('cors');
-const path = require('path');
+
 const app = express();
 const productRouter = require('./routes/product');
 const userRouter = require('./routes/user');
@@ -14,19 +13,14 @@ main()
   .catch((err) => console.log(err));
 
 // inbuilt middleware  app level
-app.use(cors());
 app.use(express.json());
 // app.use(express.urlencoded());
 app.use(morgan('default'));
 
-app.use(express.static(path.resolve(__dirname, 'public'))); ////make static hosting
+app.use(express.static('public')); ////make static hosting
 
 app.use('/products', productRouter.routes);
 app.use('/users', userRouter.routes);
-
-app.use('*', (req, res) => {
-  res.sendFile(path.resolve(__dirname, 'file path'));
-});
 
 //create api
 async function main() {
