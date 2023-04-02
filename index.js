@@ -25,7 +25,7 @@ app.use('/users', userRouter.routes);
 //create api
 async function main() {
   await mongoose.connect(
-    'mongodb+srv://roshan:roshan@shoping.gltusxu.mongodb.net/products?retryWrites=true&w=majority'
+    `mongodb+srv://roshan:${process.env.DB_PASSWORD}@shoping.gltusxu.mongodb.net/products?retryWrites=true&w=majority`
   );
 
   // use `await mongoose.connect('mongodb://user:password@127.0.0.1:27017/test');` if your database has auth enabled
